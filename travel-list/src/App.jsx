@@ -1,80 +1,48 @@
-const initialItems = [
-  { id: 1, description: "Passports", quantity: 2, packed: false },
-  { id: 2, description: "Socks", quantity: 12, packed: true },
-  { id: 3, description: "Charger", quantity: 1, packed: false },
-];
+/* eslint-disable no-unused-vars */
+import { useState } from "react";
+import { Logo } from "./components/Logo";
+import { Form } from "./components/Form";
+import { PackingList } from "./components/PackingList";
+import { Item } from "./components/Item";
+import { Stats } from "./components/Stats";
 
 export const App = () => {
-  return (
-    <div className="app">
-      <Logo />
-      <From />
-      <PackingList />
-      <Stats />
-    </div>
-  )
-}
+  const [items, setItems] = useState([])
 
-const Logo = () => {
-  return (
-    <h1> 🤑Far Away🤑</h1>
-  )
-}
+  const handleAddItem = (item) => {
+    setItems((items) => [...items, item])
+  }
 
-const From = () => {
+  const handleDeleteItem = (id) => {
+    setItems((items) => items.filter((item) => item.id !== id))
+  }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('success')
+  const handleToggleItem = (id) => {
+    setItems((items) => items.map((item) => item.id === id
+      ? { ...item, packed: !item.packed } : item))
+  }
+
+  const handleClearList = () => {
+    const confirmed = window.confirm('Are you sure you want to delete all items ?')
+    if (confirmed) setItems([]);
   }
 
   return (
-    <form className="add-form" onSubmit={handleSubmit}>
-      <h3>What do you need for your 😘 trip ?</h3>
-      <select>
-        {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
-          <option value={num} key={num}>{num}</option>
-        ))}
-      </select>
-      <input type="text" placeholder="Item..." />
-      <button>Add</button>
-    </form>
-  )
-}
-
-const PackingList = () => {
-  return (
-    <div className="list">
-      <ul>
-        {
-          initialItems.map((item) => (
-            <Item item={item} key={item.id}/>
-          ))
-        }
-      </ul>
+    <div className="app">
+      <Logo />
+      <Form onAddItems={handleAddItem} />
+      <PackingList
+        items={items}
+        onDeleteItem={handleDeleteItem}
+        onToggleItem={handleToggleItem}
+        onClearList={handleClearList}
+      />
+      <Stats items={items} />
     </div>
   )
 }
 
-const Item = (props) => {
-  const { item } = props;
-  return (
-    <li>
-      <span style={item.packed ? { textDecoration: "line-through" } : {}}>
-        {item.quantity} {item.description}
-      </span>
-      <button>❌</button>
-    </li>
-  )
-}
 
-const Stats = () => {
-  return (
-    <footer className="stats">
-      <em>👨‍🎓 You have X items on your list, and you already packed X (X%)</em>
-    </footer>
-  )
-}
 
 
 
